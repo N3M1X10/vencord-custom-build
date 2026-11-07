@@ -33,6 +33,7 @@ if %ERRORLEVEL% equ 0 (
     echo.&echo [93mPress any key to exit . . . &>nul timeout /t 30 & goto close
 )
 
+
 :check-git
 echo.
 echo [90mchecking git...[0m
@@ -45,6 +46,7 @@ if %ERRORLEVEL% equ 0 (
     echo [93m[ERROR] git has NOT found. Please download it from git-scm.com
     echo.&echo [93mPress any key to exit . . . &>nul timeout /t 30 & goto close
 )
+
 
 :check-upload
 echo.
@@ -73,6 +75,15 @@ cd /d "%~dp0"
 if exist "%src%" (
     echo [92mFound the Vencord dir[0m
 
+    ::upd vencord git
+        echo.
+    echo [93mUpdating . . .[90m
+    cd Vencord
+    git fetch origin
+    git reset --hard origin/main
+    echo [92mDone[0m
+
+    ::clean userplugins
     cd /d "%~dp0%src%"
     if exist "%plugins%" (
         echo.&echo [93muserplugins dir already there. cleaning . . .[0m
@@ -114,9 +125,9 @@ rem echo done
 
 :inject
 echo.&echo [93mbuilding and injecting the vencord . . .[0m
-cd /d %~dp0\Vencord
+cd /d "%~dp0Vencord"
 :: build
-call pnpm build --dev
+call pnpm build
 :: inject
 call pnpm inject --branch auto
 if "%errorlevel%" neq "0" (msg * "[%~xn0] : pnpm inject exit code: %errorlevel%")
